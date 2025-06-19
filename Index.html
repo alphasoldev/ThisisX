@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matrix X</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #000;
+            overflow: hidden;
+            font-family: 'Courier New', monospace;
+            height: 100vh;
+            position: relative;
+        }
+
+        #matrix-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+
+        .center-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #00ff41;
+            text-shadow: 0 0 20px #00ff41, 0 0 40px #00ff41;
+            z-index: 2;
+            animation: pulse 2s infinite;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .small-text {
+            font-size: 30px;
+            font-weight: normal;
+            display: block;
+            margin-bottom: 10px;
+        }
+        
+        .big-x {
+            font-size: 120px;
+            font-weight: bold;
+            display: block;
+        }
+
+        @keyframes pulse {
+            0%, 100% { 
+                opacity: 1;
+                text-shadow: 0 0 20px #00ff41, 0 0 40px #00ff41;
+            }
+            50% { 
+                opacity: 0.7;
+                text-shadow: 0 0 10px #00ff41, 0 0 20px #00ff41;
+            }
+        }
+
+        .x-link {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 2;
+        }
+
+        .x-link a {
+            color: #00ff41;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: bold;
+            text-shadow: 0 0 10px #00ff41;
+            transition: all 0.3s ease;
+            border: 2px solid #00ff41;
+            padding: 10px 20px;
+            border-radius: 5px;
+            background: rgba(0, 0, 0, 0.8);
+        }
+
+        .x-link a:hover {
+            background: #00ff41;
+            color: #000;
+            text-shadow: none;
+            box-shadow: 0 0 20px #00ff41;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="matrix-canvas"></canvas>
+    <div class="center-text">
+        <span class="small-text">this is</span>
+        <span class="big-x">X</span>
+    </div>
+    <div class="x-link">
+        <a href="https://x.com/jeanshibaX" target="_blank">@thisisX</a>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('matrix-canvas');
+        const ctx = canvas.getContext('2d');
+
+        // Set canvas size
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        // Matrix rain variables
+        const letters = 'X';
+        const fontSize = 16;
+        const columns = Math.floor(canvas.width / fontSize);
+        const drops = [];
+
+        // Initialize drops
+        for (let i = 0; i < columns; i++) {
+            drops[i] = Math.random() * -canvas.height;
+        }
+
+        function drawMatrix() {
+            // Semi-transparent black background for trail effect
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Green text
+            ctx.fillStyle = '#00ff41';
+            ctx.font = fontSize + 'px Courier New';
+
+            for (let i = 0; i < drops.length; i++) {
+                // Random character (always X in this case)
+                const text = letters;
+                
+                // Only draw if drop is within screen bounds
+                if (drops[i] > 0) {
+                    ctx.fillText(text, i * fontSize, drops[i]);
+                }
+
+                // Move drop down
+                drops[i] += fontSize;
+
+                // Reset drop to top when it goes off screen
+                if (drops[i] > canvas.height && Math.random() > 0.975) {
+                    drops[i] = -fontSize * Math.random() * 20;
+                }
+            }
+        }
+
+        // Animate the matrix rain
+        setInterval(drawMatrix, 35);
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            
+            // Recalculate columns and reinitialize drops
+            const newColumns = Math.floor(canvas.width / fontSize);
+            drops.length = newColumns;
+            for (let i = 0; i < newColumns; i++) {
+                if (drops[i] === undefined) {
+                    drops[i] = Math.random() * -canvas.height;
+                }
+            }
+        });
+    </script>
+</body>
+</html>
